@@ -15,6 +15,7 @@
                     <li><a href="{% url 'company_detail' company_id=team.company.id %}">К компании</a></li>
                     {% if is_manager or is_owner %}
                     <li><a href="{% url 'team_add_user' team_id=team.id %}">Добавить пользователя</a></li>
+                    <li><a href="{% url 'create_team_invitation' team_id=team.id %}">Создать приглашение</a></li>
                     <li><a href="{% url 'perfreview_create_team' team_id=team.id %}">Запустить перфревью для всей команды</a></li>
                     {% endif %}
                 </ul>

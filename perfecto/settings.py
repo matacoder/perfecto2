@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'companies',
     'teams',
     'reviews',
+    'invitations',
 ]
 
 MIDDLEWARE = [

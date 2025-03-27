@@ -8,6 +8,13 @@
     <div class="column is-6-tablet is-5-desktop">
         <div class="box">
             <h1 class="title has-text-centered">Регистрация</h1>
+            
+            {% if invitation_info %}
+            <div class="notification is-info is-light">
+                <p>Вы регистрируетесь по приглашению в {{ invitation_info.type }} <strong>{{ invitation_info.name }}</strong>.</p>
+                <p>После регистрации вы будете автоматически добавлены.</p>
+            </div>
+            {% endif %}
 
             <form method="post">
                 {% csrf_token %}

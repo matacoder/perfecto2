@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
+from django.contrib import messages
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, TelegramLoginForm
 from .models import User
 import uuid
@@ -16,16 +17,88 @@ def home_view(request):
 
 def register_view(request):
     """User registration view."""
+    # Check if there's a pending invitation
+    pending_invitation_id = request.session.get('pending_invitation')
+    
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
+            
+            # Process invitation if it exists
+            if pending_invitation_id:
+                try:
+                    from invitations.models import Invitation
+                    invitation = Invitation.objects.get(id=pending_invitation_id)
+                    
+                    # Add user to company or team based on invitation type
+                    if invitation.invitation_type == Invitation.TYPE_COMPANY:
+                        from companies.models import CompanyUsers
+                        CompanyUsers.objects.create(
+                            user=user,
+                            company=invitation.company,
+                            is_manager=invitation.is_manager_invite,
+                            is_owner=False
+                        )
+                        messages.success(request, f"Вы успешно присоединились к компании {invitation.company.company_name}!")
+                        
+                        # Clear the pending invitation
+                        del request.session['pending_invitation']
+                        return redirect('company_detail', company_id=invitation.company.id)
+                    
+                    else:  # Team invitation
+                        from companies.models import CompanyUsers
+                        from teams.models import TeamUsers
+                        
+                        # First add user to company
+                        CompanyUsers.objects.create(
+                            user=user,
+                            company=invitation.company,
+                            is_manager=False,
+                            is_owner=False
+                        )
+                        
+                        # Then add to team
+                        TeamUsers.objects.create(
+                            user=user,
+                            team=invitation.team,
+                            is_manager=invitation.is_manager_invite,
+                            is_owner=False
+                        )
+                        
+                        messages.success(request, f"Вы успешно присоединились к команде {invitation.team.team_name}!")
+                        
+                        # Clear the pending invitation
+                        del request.session['pending_invitation']
+                        return redirect('team_detail', team_id=invitation.team.id)
+                        
+                except Exception as e:
+                    messages.error(request, f"Возникла ошибка при обработке приглашения: {str(e)}")
+            
+            # No invitation or error processing invitation
             return redirect('dashboard')
     else:
         form = CustomUserCreationForm()
     
-    return render(request, 'accounts/register.html', {'form': form})
+    # If there's a pending invitation, show that in the template context
+    invitation_info = None
+    if pending_invitation_id:
+        try:
+            from invitations.models import Invitation
+            invitation = Invitation.objects.get(id=pending_invitation_id)
+            if not invitation.is_expired:
+                invitation_info = {
+                    'type': 'команду' if invitation.invitation_type == Invitation.TYPE_TEAM else 'компанию',
+                    'name': invitation.target_name
+                }
+        except Exception:
+            pass
+    
+    return render(request, 'accounts/register.html', {
+        'form': form,
+        'invitation_info': invitation_info
+    })
 
 def login_view(request):
     """Login view for traditional email/password authentication."""

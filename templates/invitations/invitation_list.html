@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Мои приглашения | Perfecto{% endblock %}
+
+{% block content %}
+<h1 class="title">Мои приглашения</h1>
+
+<div class="tabs is-boxed">
+    <ul>
+        <li class="is-active"><a href="#active-invitations" data-tab="active-invitations">Активные приглашения</a></li>
+        <li><a href="#expired-invitations" data-tab="expired-invitations">Истекшие приглашения</a></li>
+    </ul>
+</div>
+
+<div class="tab-content" id="active-invitations">
+    {% if active_invitations %}
+    <div class="table-container">
+        <table class="table is-fullwidth">
+            <thead>
+                <tr>
+                    <th>Тип</th>
+                    <th>Название</th>
+                    <th>Создано</th>
+                    <th>Истекает</th>
+                    <th>Ссылка</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invitation in active_invitations %}
+                <tr>
+                    <td>
+                        {% if invitation.invitation_type == 'team' %}
+                            <span class="tag is-info">Команда</span>
+                        {% else %}
+                            <span class="tag is-primary">Компания</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ invitation.target_name }}</td>
+                    <td>{{ invitation.created_at|date:"d.m.Y H:i" }}</td>
+                    <td>{{ invitation.expires_at|date:"d.m.Y H:i" }}</td>
+                    <td>
+                        <div class="field has-addons">
+                            <div class="control is-expanded">
+                                <input 
+                                    class="input is-small" 
+                                    type="text" 
+                                    value="{{ request.scheme }}://{{ request.get_host }}{% url 'invitation_accept' uuid=invitation.id %}" 
+                                    id="invitation-link-{{ invitation.id }}" 
+                                    readonly
+                                >
+                            </div>
+                            <div class="control">
+                                <button 
+                                    class="button is-small is-info" 
+                                    onclick="copyToClipboard('invitation-link-{{ invitation.id }}')"
+                                >
+                                    <span class="icon">
+                                        <i class="fas fa-copy"></i>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="notification is-info is-light">
+        <p>У вас пока нет активных приглашений.</p>
+    </div>
+    {% endif %}
+</div>
+
+<div class="tab-content" id="expired-invitations" style="display: none;">
+    {% if expired_invitations %}
+    <div class="table-container">
+        <table class="table is-fullwidth">
+            <thead>
+                <tr>
+                    <th>Тип</th>
+                    <th>Название</th>
+                    <th>Создано</th>
+                    <th>Истекло</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invitation in expired_invitations %}
+                <tr>
+                    <td>
+                        {% if invitation.invitation_type == 'team' %}
+                            <span class="tag is-info is-light">Команда</span>
+                        {% else %}
+                            <span class="tag is-primary is-light">Компания</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ invitation.target_name }}</td>
+                    <td>{{ invitation.created_at|date:"d.m.Y H:i" }}</td>
+                    <td>{{ invitation.expires_at|date:"d.m.Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="notification is-info is-light">
+        <p>У вас нет истекших приглашений.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab functionality
+    const tabs = document.querySelectorAll('.tabs li');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            tabs.forEach(t => t.classList.remove('is-active'));
+            
+            // Add active class to clicked tab
+            this.classList.add('is-active');
+            
+            // Hide all tab contents
+            tabContents.forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Show the selected tab content
+            const tabId = this.querySelector('a').getAttribute('data-tab');
+            document.getElementById(tabId).style.display = 'block';
+        });
+    });
+    
+    // Copy to clipboard functionality
+    window.copyToClipboard = function(elementId) {
+        const element = document.getElementById(elementId);
+        element.select();
+        document.execCommand('copy');
+        
+        // Show feedback
+        const button = element.nextElementSibling.querySelector('button');
+        const originalHTML = button.innerHTML;
+        
+        button.innerHTML = '<span class="icon"><i class="fas fa-check"></i></span>';
+        button.classList.add('is-success');
+        button.classList.remove('is-info');
+        
+        setTimeout(function() {
+            button.innerHTML = originalHTML;
+            button.classList.remove('is-success');
+            button.classList.add('is-info');
+        }, 2000);
+    };
+});
+</script>
+{% endblock %}

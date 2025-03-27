@@ -19,7 +19,7 @@ from teams.models import Team, TeamUsers
 def setup_database():
     """Run migrations and create initial data."""
     print("Running migrations...")
-    call_command('makemigrations', 'accounts', 'companies', 'teams', 'reviews')
+    call_command('makemigrations', 'accounts', 'companies', 'teams', 'reviews', 'invitations')
     call_command('migrate')
     
     # Create a superuser for admin access

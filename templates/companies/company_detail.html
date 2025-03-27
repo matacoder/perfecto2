@@ -14,6 +14,7 @@
                     <li><a href="{% url 'company_list' %}">Назад к списку</a></li>
                     {% if is_manager or is_owner %}
                     <li><a href="{% url 'company_add_user' company_id=company.id %}">Добавить пользователя</a></li>
+                    <li><a href="{% url 'create_company_invitation' company_id=company.id %}">Создать приглашение</a></li>
                     {% endif %}
                 </ul>
                 <p class="menu-label">

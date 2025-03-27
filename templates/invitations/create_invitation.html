@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Создать приглашение | Perfecto{% endblock %}
+
+{% block content %}
+<div class="columns is-centered">
+    <div class="column is-8">
+        <div class="box">
+            <h1 class="title">
+                {% if team %}
+                    Пригласить пользователя в команду {{ team.team_name }}
+                {% else %}
+                    Пригласить пользователя в компанию {{ company.company_name }}
+                {% endif %}
+            </h1>
+            
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                
+                <div class="field">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Создать приглашение</button>
+                    </div>
+                </div>
+            </form>
+            
+            <hr>
+            
+            <div class="content">
+                <p>
+                    После создания приглашения вы получите ссылку, которую сможете отправить пользователю.
+                    Перейдя по этой ссылке, пользователь сможет присоединиться к {{ invitation_type }}.
+                </p>
+                
+                <p>
+                    Если вы укажете email, то приглашение будет привязано к этому адресу.
+                    Иначе приглашение будет доступно любому, у кого есть ссылка.
+                </p>
+                
+                {% if invitation_type == 'команду' %}
+                <p>
+                    <a href="{% url 'team_detail' team_id=team.id %}" class="button is-light">
+                        Вернуться к команде
+                    </a>
+                </p>
+                {% else %}
+                <p>
+                    <a href="{% url 'company_detail' company_id=company.id %}" class="button is-light">
+                        Вернуться к компании
+                    </a>
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
