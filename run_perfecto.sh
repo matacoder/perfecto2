@@ -21,6 +21,13 @@ source venv/bin/activate
 echo "📚 Установка зависимостей..."
 pip install -r requirements.txt
 
+# Run tests if --test flag is provided
+if [[ "$1" == "--test" ]]; then
+    echo "🧪 Запуск тестов..."
+    python -m pytest --cov=invitations
+    exit $?
+fi
+
 # Run migrations and setup data
 echo "🗄️ Настройка базы данных..."
 python setup.py
