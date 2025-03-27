@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Мои компании | Perfecto{% endblock %}
+
+{% block content %}
+<h1 class="title">Мои компании</h1>
+
+<div class="buttons mb-5">
+    <a href="{% url 'company_create' %}" class="button is-primary">
+        <span class="icon">
+            <i class="fas fa-plus"></i>
+        </span>
+        <span>Создать компанию</span>
+    </a>
+</div>
+
+{% if companies %}
+<div class="columns is-multiline">
+    {% for company in companies %}
+    <div class="column is-4">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title">
+                    {{ company.company_name }}
+                </p>
+            </header>
+            <div class="card-content">
+                <div class="content">
+                    {% if company.company_description %}
+                        <p>{{ company.company_description }}</p>
+                    {% else %}
+                        <p><em>Описание отсутствует</em></p>
+                    {% endif %}
+                </div>
+            </div>
+            <footer class="card-footer">
+                <a href="{% url 'company_detail' company_id=company.id %}" class="card-footer-item">Подробнее</a>
+            </footer>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="notification is-info is-light">
+    <p>У вас пока нет компаний. Создайте новую компанию, чтобы начать работу.</p>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}{{ company.company_name }} | Perfecto{% endblock %}
+
+{% block content %}
+<div class="columns">
+    <div class="column is-3">
+        <div class="box">
+            <aside class="menu">
+                <p class="menu-label">
+                    Управление
+                </p>
+                <ul class="menu-list">
+                    <li><a href="{% url 'company_list' %}">Назад к списку</a></li>
+                    {% if is_manager or is_owner %}
+                    <li><a href="{% url 'company_add_user' company_id=company.id %}">Добавить пользователя</a></li>
+                    {% endif %}
+                </ul>
+                <p class="menu-label">
+                    Команды
+                </p>
+                <ul class="menu-list">
+                    {% if is_manager or is_owner %}
+                    <li><a href="{% url 'team_create' company_id=company.id %}">Создать команду</a></li>
+                    {% endif %}
+                </ul>
+            </aside>
+        </div>
+    </div>
+    <div class="column">
+        <div class="box">
+            <h1 class="title">{{ company.company_name }}</h1>
+            <div class="content">
+                <p>{{ company.company_description }}</p>
+                {% if is_owner %}
+                <p><span class="tag is-success">Владелец</span></p>
+                {% elif is_manager %}
+                <p><span class="tag is-info">Менеджер</span></p>
+                {% endif %}
+            </div>
+
+            <hr>
+            
+            <h2 class="title is-4">Сотрудники</h2>
+            <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>Имя</th>
+                        <th>Email</th>
+                        <th>Должность</th>
+                        <th>Роль</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cu in company_users %}
+                    <tr>
+                        <td>{{ cu.user.user_name }}</td>
+                        <td>{{ cu.user.email }}</td>
+                        <td>{{ cu.user.user_job }}</td>
+                        <td>
+                            {% if cu.is_owner %}
+                            <span class="tag is-success">Владелец</span>
+                            {% elif cu.is_manager %}
+                            <span class="tag is-info">Менеджер</span>
+                            {% else %}
+                            <span class="tag is-light">Сотрудник</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <hr>
+
+            <h2 class="title is-4">Команды</h2>
+            {% if company.teams.all %}
+            <div class="columns is-multiline">
+                {% for team in company.teams.all %}
+                <div class="column is-4">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">
+                                {{ team.team_name }}
+                            </p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+                                {% if team.team_description %}
+                                <p>{{ team.team_description }}</p>
+                                {% else %}
+                                <p><em>Описание отсутствует</em></p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <footer class="card-footer">
+                            <a href="{% url 'team_detail' team_id=team.id %}" class="card-footer-item">Подробнее</a>
+                            {% if is_manager or is_owner %}
+                            <a href="{% url 'perfreview_create_team' team_id=team.id %}" class="card-footer-item">Запустить перфревью</a>
+                            {% endif %}
+                        </footer>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="notification is-info is-light">
+                <p>В этой компании пока нет команд.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

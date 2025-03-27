@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Добавить пользователя | {{ team.team_name }} | Perfecto{% endblock %}
+
+{% block content %}
+<div class="columns is-centered">
+    <div class="column is-8">
+        <div class="box">
+            <h1 class="title">Добавить пользователя в команду {{ team.team_name }}</h1>
+            
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Добавить</button>
+                    </div>
+                    <div class="control">
+                        <a href="{% url 'team_detail' team_id=team.id %}" class="button is-light">Отмена</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

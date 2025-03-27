@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Ссылка отправлена | Perfecto{% endblock %}
+
+{% block content %}
+<div class="columns is-centered">
+    <div class="column is-6-tablet is-5-desktop">
+        <div class="box">
+            <div class="has-text-centered mb-4">
+                <span class="icon is-large">
+                    <i class="fab fa-telegram fa-3x has-text-info"></i>
+                </span>
+            </div>
+            <h1 class="title has-text-centered">Ссылка отправлена</h1>
+            <p class="has-text-centered">
+                Мы отправили ссылку для входа в ваш Telegram: <strong>{{ telegram_username }}</strong>.
+            </p>
+            <p class="has-text-centered my-4">
+                Пожалуйста, проверьте свои сообщения и перейдите по ссылке для автоматического входа в систему.
+            </p>
+            
+            <div class="notification is-info is-light">
+                <p class="has-text-centered">
+                    <strong>Примечание:</strong> В демо-режиме бот Telegram не настроен. В реальной версии здесь будет отправлена ссылка для входа.
+                </p>
+            </div>
+            
+            <div class="has-text-centered mt-5">
+                <a href="{% url 'login' %}" class="button is-info">Вернуться на страницу входа</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

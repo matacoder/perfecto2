@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Дашборд | Perfecto{% endblock %}
+
+{% block content %}
+<div class="columns">
+    <div class="column is-3">
+        <div class="box">
+            <aside class="menu">
+                <p class="menu-label">
+                    Компании и команды
+                </p>
+                <ul class="menu-list">
+                    <li><a href="{% url 'company_list' %}">Мои компании</a></li>
+                    <li><a href="{% url 'company_create' %}">Создать компанию</a></li>
+                    <li><a href="{% url 'team_list' %}">Мои команды</a></li>
+                </ul>
+                
+                <p class="menu-label">
+                    Перфревью
+                </p>
+                <ul class="menu-list">
+                    <li><a href="{% url 'perfreview_list' %}">Все перфревью</a></li>
+                </ul>
+            </aside>
+        </div>
+    </div>
+    <div class="column">
+        <div class="box">
+            <h1 class="title">Добро пожаловать, {{ user.user_name }}!</h1>
+            <h2 class="subtitle">Дашборд перфревью</h2>
+            
+            <hr>
+            
+            <div class="columns is-multiline">
+                <div class="column is-6">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">
+                                Управление компаниями
+                            </p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+                                <p>
+                                    <a href="{% url 'company_list' %}" class="button is-info is-fullwidth">
+                                        <span class="icon">
+                                            <i class="fas fa-building"></i>
+                                        </span>
+                                        <span>Перейти к компаниям</span>
+                                    </a>
+                                </p>
+                                <p>
+                                    <a href="{% url 'company_create' %}" class="button is-success is-fullwidth">
+                                        <span class="icon">
+                                            <i class="fas fa-plus"></i>
+                                        </span>
+                                        <span>Создать компанию</span>
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="column is-6">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">
+                                Перфревью
+                            </p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+                                <p>
+                                    <a href="{% url 'perfreview_list' %}" class="button is-primary is-fullwidth">
+                                        <span class="icon">
+                                            <i class="fas fa-chart-line"></i>
+                                        </span>
+                                        <span>Мои перфревью</span>
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

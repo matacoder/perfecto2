@@ -1,0 +1,32 @@
+/* Custom styles for Perfecto app */
+
+.score-badge {
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+}
+
+.achievement-box {
+    transition: all 0.3s;
+    margin-bottom: 1.5rem;
+}
+
+.achievement-box:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.navbar-brand .navbar-item {
+    font-weight: bold;
+}
+
+/* Animation for notifications */
+@keyframes fadeOut {
+    0% {opacity: 1;}
+    90% {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+.auto-dismiss {
+    animation: fadeOut 5s forwards;
+}

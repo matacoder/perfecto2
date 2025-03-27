@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Создание команды | Perfecto{% endblock %}
+
+{% block content %}
+<div class="columns is-centered">
+    <div class="column is-8">
+        <div class="box">
+            <h1 class="title">Создание команды в {{ company.company_name }}</h1>
+            
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Создать</button>
+                    </div>
+                    <div class="control">
+                        <a href="{% url 'company_detail' company_id=company.id %}" class="button is-light">Отмена</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

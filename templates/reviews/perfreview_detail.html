@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load review_extras %}
+
+{% block title %}Перфревью {{ review.user.user_name }} | Perfecto{% endblock %}
+
+{% block content %}
+<div class="columns">
+    <div class="column is-3">
+        <div class="box">
+            <aside class="menu">
+                <p class="menu-label">
+                    Навигация
+                </p>
+                <ul class="menu-list">
+                    <li><a href="{% url 'perfreview_list' %}">Назад к списку</a></li>
+                    <li><a href="{% url 'team_detail' team_id=review.team.id %}">К команде</a></li>
+                </ul>
+                <p class="menu-label">
+                    Действия
+                </p>
+                <ul class="menu-list">
+                    {% if is_subject or is_manager %}
+                    <li>
+                        <a href="{% url 'achievement_create' review_id=review.id %}" class="button is-primary is-fullwidth">
+                            <span class="icon">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                            <span>Добавить достижение</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </aside>
+        </div>
+    </div>
+    <div class="column">
+        <div class="box">
+            <h1 class="title">Перформанс ревью: {{ review.user.user_name }}</h1>
+            <h2 class="subtitle">Команда: {{ review.team.team_name }}</h2>
+            
+            <div class="content">
+                <p>
+                    <strong>Должность:</strong> {{ review.user.user_job }}<br>
+                    <strong>Дата создания:</strong> {{ review.created|date:"d.m.Y H:i" }}
+                </p>
+            </div>
+            
+            <hr>
+            
+            <h3 class="title is-4">Достижения</h3>
+            
+            {% if achievements %}
+                {% for achievement in achievements %}
+                <div class="box">
+                    <h4 class="title is-5">{{ achievement.title }}</h4>
+                    <div class="columns">
+                        <div class="column is-4">
+                            <p>
+                                <strong>Самооценка:</strong> 
+                                <span class="tag is-primary is-medium">{{ achievement.self_score }}</span>
+                            </p>
+                        </div>
+                        <div class="column">
+                            <p><strong>Ревьюеры:</strong></p>
+                            <div class="tags">
+                                {% for reviewer in achievement.reviewers.all %}
+                                <span class="tag is-info">{{ reviewer.user_name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5 class="title is-6">Оценки</h5>
+                    {% with scores=achievement.scores.all %}
+                    {% if scores %}
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>Ревьюер</th>
+                                <th>Оценка</th>
+                                <th>Комментарий</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for score in scores %}
+                            <tr>
+                                <td>{{ score.user.user_name }}</td>
+                                <td><span class="tag is-primary">{{ score.score }}</span></td>
+                                <td>{{ score.comment }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p class="has-text-grey">Пока нет оценок.</p>
+                    {% endif %}
+                    {% endwith %}
+                    
+                    {% if request.user in achievement.reviewers.all %}
+                        {% if not user_scored_achievements|get_item:achievement.id %}
+                        <div class="buttons">
+                            <a href="{% url 'achievement_score' achievement_id=achievement.id %}" class="button is-primary">
+                                <span class="icon">
+                                    <i class="fas fa-star"></i>
+                                </span>
+                                <span>Оценить достижение</span>
+                            </a>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+            <div class="notification is-info is-light">
+                <p>Пока нет добавленных достижений.</p>
+                {% if is_subject %}
+                <p class="mt-3">
+                    <a href="{% url 'achievement_create' review_id=review.id %}" class="button is-primary">
+                        <span class="icon">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span>Добавить достижение</span>
+                    </a>
+                </p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

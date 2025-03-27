@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Добавление достижения | Perfecto{% endblock %}
+
+{% block content %}
+<div class="columns is-centered">
+    <div class="column is-8">
+        <div class="box">
+            <h1 class="title">Добавление достижения</h1>
+            <h2 class="subtitle">Перформанс ревью для {{ review.user.user_name }}</h2>
+            
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Добавить</button>
+                    </div>
+                    <div class="control">
+                        <a href="{% url 'perfreview_detail' review_id=review.id %}" class="button is-light">Отмена</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

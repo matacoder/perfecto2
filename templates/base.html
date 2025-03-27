@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Perfecto - Performance Reviews{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <script src="https://kit.fontawesome.com/c1f89c8d99.js" crossorigin="anonymous"></script>
+    <style>
+        .hero.is-primary {
+            background: linear-gradient(145deg, #00d1b2, #009688);
+        }
+        .navbar-item img {
+            max-height: 2.5rem;
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="{% url 'home' %}">
+                <span class="icon-text">
+                    <span class="icon">
+                        <i class="fas fa-chart-line"></i>
+                    </span>
+                    <span class="has-text-weight-bold is-size-4">Perfecto</span>
+                </span>
+            </a>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-end">
+                {% if user.is_authenticated %}
+                <div class="navbar-item">
+                    <a class="navbar-item" href="{% url 'dashboard' %}">
+                        Дашборд
+                    </a>
+                </div>
+                <div class="navbar-item">
+                    <a class="navbar-item" href="{% url 'company_list' %}">
+                        Компании
+                    </a>
+                </div>
+                <div class="navbar-item">
+                    <a class="navbar-item" href="{% url 'team_list' %}">
+                        Команды
+                    </a>
+                </div>
+                <div class="navbar-item">
+                    <a class="navbar-item" href="{% url 'perfreview_list' %}">
+                        Перфревью
+                    </a>
+                </div>
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-light" href="{% url 'logout' %}">
+                            Выйти
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-primary" href="{% url 'register' %}">
+                            <strong>Зарегистрироваться</strong>
+                        </a>
+                        <a class="button is-light" href="{% url 'login' %}">
+                            Войти
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="notification {% if message.tags %}is-{{ message.tags }}{% endif %} is-light">
+            <button class="delete"></button>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <section class="section">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Perfecto</strong> - система для проведения перформанс ревью в IT-компаниях.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Close notification messages
+            (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+                const $notification = $delete.parentNode;
+                $delete.addEventListener('click', () => {
+                    $notification.parentNode.removeChild($notification);
+                });
+            });
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

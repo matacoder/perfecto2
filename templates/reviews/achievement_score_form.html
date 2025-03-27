@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Оценка достижения | Perfecto{% endblock %}
+
+{% block content %}
+<div class="columns is-centered">
+    <div class="column is-8">
+        <div class="box">
+            <h1 class="title">Оценка достижения</h1>
+            
+            <div class="content">
+                <blockquote>
+                    <strong>{{ achievement.title }}</strong>
+                    <p>Самооценка сотрудника: <span class="tag is-primary">{{ achievement.self_score }}</span></p>
+                </blockquote>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Сохранить оценку</button>
+                    </div>
+                    <div class="control">
+                        <a href="{% url 'perfreview_detail' review_id=achievement.perfreview.id %}" class="button is-light">Отмена</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

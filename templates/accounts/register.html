@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Регистрация | Perfecto{% endblock %}
+
+{% block content %}
+<div class="columns is-centered">
+    <div class="column is-6-tablet is-5-desktop">
+        <div class="box">
+            <h1 class="title has-text-centered">Регистрация</h1>
+
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="field">
+                    <div class="control">
+                        <button type="submit" class="button is-primary is-fullwidth">Зарегистрироваться</button>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="mt-5 has-text-centered">
+                <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
