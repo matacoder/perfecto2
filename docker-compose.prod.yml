@@ -64,8 +64,7 @@ services:
     ports:
       - "2222:80"  # Публикуем на порт 2222 для последующего проксирования через Caddy
     volumes:
-      # Исправляем монтирование конфигурационного файла
-      - ${NGINX_CONFIG_PATH}:/etc/nginx/conf.d/default.conf:ro
+      - /root/nginx/default.conf:/etc/nginx/conf.d/default.conf
       - static_volume:/var/www/html/static
       - media_volume:/var/www/html/media
     depends_on:
