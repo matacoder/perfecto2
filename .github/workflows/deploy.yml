@@ -87,17 +87,49 @@ jobs:
           grep -q "POSTGRES_USER=" .env.prod && echo "✓ POSTGRES_USER найден" || echo "❌ POSTGRES_USER не найден" 
           grep -q "POSTGRES_PASSWORD=" .env.prod && echo "✓ POSTGRES_PASSWORD найден" || echo "❌ POSTGRES_PASSWORD не найден"
       
+      - name: Export environment variables
+        run: |
+          echo "🔄 Экспорт переменных окружения из .env.prod..."
+          
+          # Добавляем NGINX_CONFIG_PATH для монтирования конфигурации nginx
+          NGINX_PATH="/home/${SSH_USER}/nginx_config/default.conf"
+          echo "NGINX_CONFIG_PATH=${NGINX_PATH}" >> .env.prod
+          echo "✓ Добавлена переменная NGINX_CONFIG_PATH=${NGINX_PATH}"
+          
+          # Экспортируем все переменные из .env.prod
+          echo "🔍 Экспортируем все переменные из .env.prod..."
+          set -a  # Automatically export all variables
+          source .env.prod
+          set +a  # Stop automatically exporting
+          
+          # Выводим список экспортированных переменных (без значений для безопасности)
+          echo "📋 Список экспортированных переменных:"
+          cat .env.prod | grep -v '^#' | grep '=' | cut -d= -f1 | while read -r var_name; do
+            if [ -n "$var_name" ]; then
+              echo "✓ $var_name"
+              # Проверяем, что переменная действительно экспортирована
+              printenv | grep -q "^$var_name=" && echo "  ➜ Экспортирована" || echo "  ➜ НЕ экспортирована ❌"
+            fi
+          done
+          
+          echo "✅ Переменные окружения экспортированы"
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+      
       - name: Build and deploy with Docker Compose
         run: |
           echo "🏗️ Сборка Docker образов..."
           
-          
-          # Явно передаем переменные окружения для Docker Compose
-          echo "NGINX_CONFIG_PATH=${NGINX_PATH}" >> .env.prod
-          
           # Проверяем содержимое requirements.txt
           echo "📋 Проверяем файл requirements.txt:"
           grep -E "gunicorn|psycopg2" requirements.txt || echo "⚠️ В requirements.txt отсутствуют важные зависимости!"
+          
+          # Запуск с экспортированными переменными и явным указанием файла .env.prod
+          # Это двойное обеспечение использования переменных окружения
+          echo "🚀 Запуск Docker Compose с экспортированными переменными и файлом .env.prod..."
+          set -a
+          source .env.prod
+          set +a
           
           # Запускаем сборку и деплой
           docker compose --env-file .env.prod -f docker-compose.prod.yml build
