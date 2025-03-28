@@ -43,18 +43,6 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       
-      - name: Ensure nginx directory structure
-        run: |
-          echo "🔧 Создание структуры директорий для nginx конфигурации..."
-          mkdir -p nginx/conf.d
-          if [ -f "nginx/nginx.conf" ]; then
-            cp nginx/nginx.conf nginx/conf.d/default.conf
-            echo "✅ Конфигурация nginx скопирована в conf.d/default.conf"
-          else
-            echo "❌ Файл nginx.conf не найден!"
-            exit 1
-          fi
-      
       - name: Setup Docker context for remote access
         run: |
           # Создаем конфигурацию SSH для предотвращения проверки host key
@@ -71,14 +59,23 @@ jobs:
       
       - name: Copy nginx configuration to remote server
         run: |
-          echo "📂 Копирование конфигурации nginx на удаленный сервер..."
-          # Создание временной директории на удаленном сервере
+          echo "📂 Подготовка и копирование конфигурации nginx на удаленный сервер..."
+          # Проверяем наличие файла конфигурации
+          if [ ! -f "nginx/nginx.conf" ]; then
+            echo "❌ Файл nginx/nginx.conf не найден!"
+            exit 1
+          fi
+          
+          # Создание директории на удаленном сервере
           ssh ${SSH_USER}@${IP} "mkdir -p ~/nginx_config"
           
-          # Копирование конфигурации
-          scp -r nginx/conf.d ${SSH_USER}@${IP}:~/nginx_config/
+          # Копирование файла конфигурации
+          scp nginx/nginx.conf ${SSH_USER}@${IP}:~/nginx_config/default.conf
           
-          echo "✅ Конфигурация nginx скопирована на удаленный сервер"
+          echo "✅ Файл конфигурации nginx скопирован на удаленный сервер как ~/nginx_config/default.conf"
+          
+          # Проверяем скопированный файл
+          ssh ${SSH_USER}@${IP} "ls -la ~/nginx_config/ && cat ~/nginx_config/default.conf | head -5"
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           IP: ${{ secrets.IP }}
@@ -99,14 +96,27 @@ jobs:
       - name: Build and deploy with Docker Compose
         run: |
           echo "🏗️ Сборка Docker образов..."
-          # Обновляем docker-compose.yml для использования скопированной конфигурации
-          sed -i 's|./nginx/conf.d|/home/'${SSH_USER}'/nginx_config/conf.d|g' docker-compose.prod.yml
           
-          # Явно передаем файл переменных окружения при каждом вызове docker compose
+          # Задаем путь к файлу конфигурации nginx на удаленном сервере
+          NGINX_PATH="/home/${SSH_USER}/nginx_config/default.conf"
+          echo "🔧 Путь к файлу конфигурации nginx: ${NGINX_PATH}"
+          
+          # Явно передаем переменные окружения для Docker Compose
+          echo "NGINX_CONFIG_PATH=${NGINX_PATH}" >> .env.prod
+          
+          # Запускаем сборку и деплой
           docker compose --env-file .env.prod -f docker-compose.prod.yml build
           
           echo "🚀 Запуск контейнеров..."
           docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
+          
+          # Проверка логов nginx для диагностики
+          echo "📋 Логи nginx контейнера (последние 20 строк):"
+          docker compose --env-file .env.prod -f docker-compose.prod.yml logs --tail=20 nginx
+          
+          # Проверка содержимого файла конфигурации внутри контейнера
+          echo "📄 Проверка конфигурации nginx внутри контейнера:"
+          docker compose --env-file .env.prod -f docker-compose.prod.yml exec nginx cat /etc/nginx/conf.d/default.conf | head -10
           
           echo "✅ Деплой успешно выполнен! Приложение доступно по адресу: https://${DOMAIN}"
         env:
