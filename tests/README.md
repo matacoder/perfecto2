@@ -24,12 +24,13 @@ python -m pytest tests/invitations/
 python -m pytest tests/companies/
 python -m pytest tests/teams/
 python -m pytest tests/reviews/
+python -m pytest tests/perfecto/
 ```
 
 To run tests with coverage report:
 
 ```bash
-python -m pytest --cov=accounts --cov=invitations --cov=companies --cov=teams --cov=reviews --cov-report=term
+python -m pytest --cov=accounts --cov=invitations --cov=companies --cov=teams --cov=reviews --cov=perfecto --cov-report=term
 ```
 
 ## Test Organization
@@ -65,3 +66,9 @@ Tests are organized by application:
   - `test_forms.py` - Tests for review forms
   - `test_views.py` - Tests for review views
   - `test_urls.py` - Tests for review URLs
+
+- `tests/perfecto/` - Tests for the core Perfecto project
+  - `test_urls.py` - Tests for project URLs configuration
+  - `test_settings.py` - Tests for project settings
+  - `test_templates.py` - Tests for template rendering
+  - `test_wsgi.py` - Tests for WSGI application
