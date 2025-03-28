@@ -70,12 +70,12 @@ jobs:
           ssh ${SSH_USER}@${IP} "mkdir -p ~/nginx_config"
           
           # Копирование файла конфигурации
-          scp nginx/nginx.conf ${SSH_USER}@${IP}:~/nginx_config/default.conf
+          scp nginx/nginx.conf ${SSH_USER}@${IP}:~/nginx_config/app.conf
           
-          echo "✅ Файл конфигурации nginx скопирован на удаленный сервер как ~/nginx_config/default.conf"
+          echo "✅ Файл конфигурации nginx скопирован на удаленный сервер как ~/nginx_config/app.conf"
           
           # Проверяем скопированный файл
-          ssh ${SSH_USER}@${IP} "ls -la ~/nginx_config/ && cat ~/nginx_config/default.conf | head -5"
+          ssh ${SSH_USER}@${IP} "ls -la ~/nginx_config/ && cat ~/nginx_config/app.conf | head -5"
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           IP: ${{ secrets.IP }}
@@ -98,7 +98,8 @@ jobs:
           echo "🏗️ Сборка Docker образов..."
           
           # Задаем путь к файлу конфигурации nginx на удаленном сервере
-          NGINX_PATH="/home/${SSH_USER}/nginx_config/default.conf"
+          # Изменено название файла с default.conf на app.conf
+          NGINX_PATH="/home/${SSH_USER}/nginx_config/app.conf"
           echo "🔧 Путь к файлу конфигурации nginx: ${NGINX_PATH}"
           
           # Явно передаем переменные окружения для Docker Compose
