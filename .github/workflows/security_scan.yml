@@ -36,3 +36,9 @@ jobs:
         run: |
           echo "🔍 Статический анализ кода на наличие уязвимостей..."
           bandit -r . -x ./venv,./tests
+      
+      - name: Check CSRF settings
+        run: |
+          echo "🔍 Проверка настроек CSRF..."
+          grep -r "CSRF_TRUSTED_ORIGINS" perfecto/settings.py || echo "⚠️ CSRF_TRUSTED_ORIGINS не настроен в Django settings!"
+          grep -r "X-Forwarded-" nginx/nginx.conf || echo "⚠️ X-Forwarded заголовки не настроены в Nginx!"

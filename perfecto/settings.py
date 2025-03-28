@@ -18,6 +18,18 @@ print(f"DEBUG: ALLOWED_HOSTS from env: '{allowed_hosts_env}'")
 ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(',') if host.strip()]
 print(f"DEBUG: Parsed ALLOWED_HOSTS: {ALLOWED_HOSTS}")
 
+# CSRF настройки для работы через прокси
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+if not CSRF_TRUSTED_ORIGINS or CSRF_TRUSTED_ORIGINS == ['']:
+    # Формируем список из ALLOWED_HOSTS, добавляя https:// и http:// префиксы
+    CSRF_TRUSTED_ORIGINS = []
+    for host in ALLOWED_HOSTS:
+        if host not in ['localhost', '127.0.0.1']:
+            CSRF_TRUSTED_ORIGINS.append(f"https://{host}")
+            CSRF_TRUSTED_ORIGINS.append(f"http://{host}")
+
+print(f"DEBUG: CSRF_TRUSTED_ORIGINS: {CSRF_TRUSTED_ORIGINS}")
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
