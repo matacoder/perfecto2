@@ -24,7 +24,7 @@ pip install -r requirements.txt
 # Run tests if --test flag is provided
 if [[ "$1" == "--test" ]]; then
     echo "🧪 Запуск тестов..."
-    python -m pytest --cov=invitations --cov=companies
+    python -m pytest --cov=accounts --cov=invitations --cov=companies --cov=teams --cov=reviews
     exit $?
 fi
 
