@@ -12,6 +12,7 @@ class InvitationForm(forms.ModelForm):
         fields = ['email', 'is_manager_invite']
         
     def clean_email(self):
+        """Validate the email field."""
         email = self.cleaned_data.get('email')
         if email:
             try:

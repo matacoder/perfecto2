@@ -185,7 +185,9 @@ class TestInvitationAccept:
         response = client.get(url)
         
         assert response.status_code == 200
-        assert 'invitation_expired.html' in [t.name for t in response.templates]
+        # Fix: Check for the correct template name (path has been modified)
+        used_templates = [t.name for t in response.templates]
+        assert any('invitation_expired.html' in template for template in used_templates)
     
     def test_accept_company_invitation(self, client, another_user, company_invitation):
         """Test accepting company invitation"""

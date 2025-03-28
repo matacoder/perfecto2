@@ -36,15 +36,19 @@ class TestInvitationForm:
     def test_clean_email_method(self):
         """Test the clean_email method directly"""
         form = InvitationForm()
-        # Valid email
-        assert form.clean_email('test@example.com') == 'test@example.com'
+        
+        # Valid email - we need to set the field first in cleaned_data
+        form.cleaned_data = {'email': 'test@example.com'}
+        assert form.clean_email() == 'test@example.com'
         
         # Empty email (valid because optional)
-        assert form.clean_email('') == ''
+        form.cleaned_data = {'email': ''}
+        assert form.clean_email() == ''
         
         # Invalid email should raise ValidationError
+        form.cleaned_data = {'email': 'not-an-email'}
         with pytest.raises(ValidationError):
-            form.clean_email('not-an-email')
+            form.clean_email()
 
 class TestInvitationAcceptForm:
     
