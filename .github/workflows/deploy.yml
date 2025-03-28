@@ -43,6 +43,18 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       
+      - name: Ensure nginx directory structure
+        run: |
+          echo "🔧 Создание структуры директорий для nginx конфигурации..."
+          mkdir -p nginx/conf.d
+          if [ -f "nginx/nginx.conf" ]; then
+            cp nginx/nginx.conf nginx/conf.d/default.conf
+            echo "✅ Конфигурация nginx скопирована в conf.d/default.conf"
+          else
+            echo "❌ Файл nginx.conf не найден!"
+            exit 1
+          fi
+      
       - name: Setup Docker context for remote access
         run: |
           # Создаем конфигурацию SSH для предотвращения проверки host key
@@ -53,6 +65,20 @@ jobs:
           docker context create remote --docker "host=ssh://${SSH_USER}@${IP}" --description "Remote Docker context for production"
           docker context use remote
           echo "✅ Docker контекст настроен успешно!"
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          IP: ${{ secrets.IP }}
+      
+      - name: Copy nginx configuration to remote server
+        run: |
+          echo "📂 Копирование конфигурации nginx на удаленный сервер..."
+          # Создание временной директории на удаленном сервере
+          ssh ${SSH_USER}@${IP} "mkdir -p ~/nginx_config"
+          
+          # Копирование конфигурации
+          scp -r nginx/conf.d ${SSH_USER}@${IP}:~/nginx_config/
+          
+          echo "✅ Конфигурация nginx скопирована на удаленный сервер"
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           IP: ${{ secrets.IP }}
@@ -73,6 +99,9 @@ jobs:
       - name: Build and deploy with Docker Compose
         run: |
           echo "🏗️ Сборка Docker образов..."
+          # Обновляем docker-compose.yml для использования скопированной конфигурации
+          sed -i 's|./nginx/conf.d|/home/'${SSH_USER}'/nginx_config/conf.d|g' docker-compose.prod.yml
+          
           # Явно передаем файл переменных окружения при каждом вызове docker compose
           docker compose --env-file .env.prod -f docker-compose.prod.yml build
           
@@ -83,6 +112,7 @@ jobs:
         env:
           DOMAIN: ${{ secrets.DOMAIN }}
           ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
       
       - name: Cleanup
         run: |
