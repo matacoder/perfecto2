@@ -9,12 +9,12 @@ services:
     env_file:
       - ./.env.prod
     environment:
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Database password is required}
+      - POSTGRES_USER=${POSTGRES_USER:?Database user is required}
+      - POSTGRES_DB=${POSTGRES_DB:?Database name is required}
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:?Database user is required} -d ${POSTGRES_DB:?Database name is required}"]
       interval: 10s
       timeout: 5s
       retries: 5

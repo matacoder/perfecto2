@@ -61,15 +61,23 @@ jobs:
         run: |
           echo "🔐 Декодирование и создание файла с переменными окружения..."
           echo "${{ secrets.ENV_FILE_BASE64 }}" | base64 -d > .env.prod
-          echo "✅ Файл .env.prod создан успешно!"
+          # Вывести информацию о файле (без чувствительных данных)
+          echo "✅ Файл .env.prod создан, проверяем:"
+          echo "Размер файла: $(wc -c < .env.prod) байт"
+          echo "Количество переменных: $(grep -c '=' .env.prod)"
+          # Для отладки проверим наличие основных переменных (без их значений)
+          grep -q "POSTGRES_DB=" .env.prod && echo "✓ POSTGRES_DB найден" || echo "❌ POSTGRES_DB не найден"
+          grep -q "POSTGRES_USER=" .env.prod && echo "✓ POSTGRES_USER найден" || echo "❌ POSTGRES_USER не найден" 
+          grep -q "POSTGRES_PASSWORD=" .env.prod && echo "✓ POSTGRES_PASSWORD найден" || echo "❌ POSTGRES_PASSWORD не найден"
       
       - name: Build and deploy with Docker Compose
         run: |
           echo "🏗️ Сборка Docker образов..."
-          docker compose -f docker-compose.prod.yml build
+          # Явно передаем файл переменных окружения при каждом вызове docker compose
+          docker compose --env-file .env.prod -f docker-compose.prod.yml build
           
           echo "🚀 Запуск контейнеров..."
-          docker compose -f docker-compose.prod.yml up -d
+          docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
           
           echo "✅ Деплой успешно выполнен! Приложение доступно по адресу: https://${DOMAIN}"
         env:
