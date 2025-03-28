@@ -5,12 +5,18 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-perfecto-local-dev-key-change-in-production'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-perfecto-local-dev-key-change-in-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# Явно проверяем и выводим значение ALLOWED_HOSTS для отладки
+allowed_hosts_env = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1')
+print(f"DEBUG: ALLOWED_HOSTS from env: '{allowed_hosts_env}'")
+
+# Корректно парсим ALLOWED_HOSTS из переменной окружения
+ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(',') if host.strip()]
+print(f"DEBUG: Parsed ALLOWED_HOSTS: {ALLOWED_HOSTS}")
 
 # Application definition
 INSTALLED_APPS = [
@@ -69,8 +75,13 @@ WSGI_APPLICATION = 'perfecto.wsgi.application'
 # Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # Используем sqlite для локальной разработки, но PostgreSQL в production
+        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': os.environ.get('POSTGRES_DB', str(BASE_DIR / 'db.sqlite3')),
+        'USER': os.environ.get('POSTGRES_USER', ''),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
+        'HOST': os.environ.get('POSTGRES_HOST', ''),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
 

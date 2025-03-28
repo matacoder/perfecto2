@@ -15,6 +15,20 @@ echo "POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:+<set>}"  # Показываем т
 echo "GUNICORN_WORKERS: ${GUNICORN_WORKERS:-3}"
 echo "GUNICORN_TIMEOUT: ${GUNICORN_TIMEOUT:-120}"
 
+# Проверка настроек ALLOWED_HOSTS
+echo "🔍 Проверка настроек ALLOWED_HOSTS..."
+echo "ALLOWED_HOSTS из окружения: ${ALLOWED_HOSTS}"
+if [[ -z "${ALLOWED_HOSTS}" ]]; then
+    echo "⚠️ ВНИМАНИЕ: ALLOWED_HOSTS не установлен! Django может отклонять запросы."
+else
+    echo "✅ ALLOWED_HOSTS установлен: ${ALLOWED_HOSTS}"
+    echo "Включает домены: $(echo ${ALLOWED_HOSTS} | tr ',' ' ')"
+fi
+
+# Выводим все переменные окружения для отладки проблем с настройками
+echo "🔍 Все переменные окружения (без значений):"
+printenv | cut -d= -f1 | sort
+
 # Попытка импорта необходимых модулей
 echo "🔍 Проверка импорта psycopg2..."
 python -c "import psycopg2; print('✅ psycopg2 импортирован успешно')" || echo "❌ Ошибка импорта psycopg2"

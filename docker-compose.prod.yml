@@ -48,6 +48,11 @@ services:
         condition: service_healthy
     env_file:
       - ./.env.prod
+    environment:
+      # Принудительно задаем ALLOWED_HOSTS в среде контейнера
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-perf.mtkv.ru,localhost,127.0.0.1}
+      # Явно указываем DB_ENGINE для PostgreSQL
+      - DB_ENGINE=django.db.backends.postgresql
     expose:
       - 8000
     networks:
