@@ -1,82 +1,61 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Perfecto - Performance Reviews{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/perfecto-bootstrap.css' %}">
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
     <script src="https://kit.fontawesome.com/c1f89c8d99.js" crossorigin="anonymous"></script>
-    <style>
-        .hero.is-primary {
-            background: linear-gradient(145deg, #00d1b2, #009688);
-        }
-        .navbar-item img {
-            max-height: 2.5rem;
-        }
-    </style>
     {% block head %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <a class="navbar-item" href="{% url 'home' %}">
-                <span class="icon-text">
-                    <span class="icon">
-                        <i class="fas fa-chart-line"></i>
-                    </span>
-                    <span class="has-text-weight-bold is-size-4">Perfecto</span>
-                </span>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+                <i class="fas fa-chart-line me-2"></i>
+                <span class="fw-bold">Perfecto</span>
             </a>
-        </div>
-
-        <div id="navbarBasicExample" class="navbar-menu">
-            <div class="navbar-end">
-                {% if user.is_authenticated %}
-                <div class="navbar-item">
-                    <a class="navbar-item" href="{% url 'dashboard' %}">
-                        Дашборд
-                    </a>
-                </div>
-                <div class="navbar-item">
-                    <a class="navbar-item" href="{% url 'company_list' %}">
-                        Компании
-                    </a>
-                </div>
-                <div class="navbar-item">
-                    <a class="navbar-item" href="{% url 'team_list' %}">
-                        Команды
-                    </a>
-                </div>
-                <div class="navbar-item">
-                    <a class="navbar-item" href="{% url 'perfreview_list' %}">
-                        Перфревью
-                    </a>
-                </div>
-                <div class="navbar-item">
-                    <a class="navbar-item" href="{% url 'invitation_list' %}">
-                        Приглашения
-                    </a>
-                </div>
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <a class="button is-light" href="{% url 'logout' %}">
-                            Выйти
-                        </a>
-                    </div>
-                </div>
-                {% else %}
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <a class="button is-primary" href="{% url 'register' %}">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">Дашборд</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'company_list' %}">Компании</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'team_list' %}">Команды</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'perfreview_list' %}">Перфревью</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'invitation_list' %}">Приглашения</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-outline-light" href="{% url 'logout' %}">Выйти</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="btn btn-light me-2" href="{% url 'register' %}">
                             <strong>Зарегистрироваться</strong>
                         </a>
-                        <a class="button is-light" href="{% url 'login' %}">
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light" href="{% url 'login' %}">
                             Войти
                         </a>
-                    </div>
-                </div>
-                {% endif %}
+                    </li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
     </nav>
@@ -84,37 +63,32 @@
     {% if messages %}
     <div class="container mt-3">
         {% for message in messages %}
-        <div class="notification {% if message.tags %}is-{{ message.tags }}{% endif %} is-light">
-            <button class="delete"></button>
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show">
             {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         {% endfor %}
     </div>
     {% endif %}
 
-    <section class="section">
+    <section class="py-4">
         <div class="container">
             {% block content %}{% endblock %}
         </div>
     </section>
 
-    <footer class="footer">
-        <div class="content has-text-centered">
-            <p>
+    <footer class="footer bg-light py-4 mt-auto">
+        <div class="container text-center">
+            <p class="mb-0">
                 <strong>Perfecto</strong> - система для проведения перформанс ревью в IT-компаниях.
             </p>
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Close notification messages
-            (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
-                const $notification = $delete.parentNode;
-                $delete.addEventListener('click', () => {
-                    $notification.parentNode.removeChild($notification);
-                });
-            });
+            // Bootstrap alerts are auto-handled by Bootstrap JS
         });
     </script>
     {% block scripts %}{% endblock %}

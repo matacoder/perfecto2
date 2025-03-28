@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_htmx',
     'crispy_forms',
+    'crispy_bootstrap5',  # Add this line
     'crispy_bulma',
     'whitenoise.runserver_nostatic',
     
@@ -113,9 +114,9 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'home'
 
-# Crispy Forms
-CRISPY_ALLOWED_TEMPLATE_PACKS = ('bulma',)
-CRISPY_TEMPLATE_PACK = 'bulma'
+# Crispy Forms - Change from bulma to bootstrap5
+CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap5',)
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 # Internationalization
 LANGUAGE_CODE = 'ru-ru'
@@ -144,4 +145,14 @@ from datetime import timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+}
+
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'secondary',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',
 }

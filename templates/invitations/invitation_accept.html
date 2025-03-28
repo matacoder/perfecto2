@@ -4,40 +4,40 @@
 {% block title %}Принятие приглашения | Perfecto{% endblock %}
 
 {% block content %}
-<div class="columns is-centered">
-    <div class="column is-6">
-        <div class="box">
-            <h1 class="title has-text-centered">Приглашение</h1>
-            
-            <div class="notification is-info is-light">
-                {% if invitation.invitation_type == 'team' %}
-                    <p>Вы были приглашены присоединиться к команде <strong>{{ invitation.team.team_name }}</strong> 
-                    в компании <strong>{{ invitation.company.company_name }}</strong>.</p>
-                {% else %}
-                    <p>Вы были приглашены присоединиться к компании <strong>{{ invitation.company.company_name }}</strong>.</p>
-                {% endif %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title text-center mb-4">Приглашение</h1>
                 
-                {% if invitation.is_manager_invite %}
-                    <p>Вам будут предоставлены права менеджера.</p>
-                {% endif %}
-                
-                <p>Приглашение действительно до: <strong>{{ invitation.expires_at|date:"d.m.Y H:i" }}</strong></p>
-                <p>Создано пользователем: <strong>{{ invitation.created_by.user_name }}</strong></p>
-            </div>
-            
-            <form method="post">
-                {% csrf_token %}
-                {{ form|crispy }}
-                
-                <div class="field">
-                    <div class="control">
-                        <button type="submit" class="button is-primary is-fullwidth">Подтвердить</button>
-                    </div>
+                <div class="alert alert-info">
+                    {% if invitation.invitation_type == 'team' %}
+                        <p>Вы были приглашены присоединиться к команде <strong>{{ invitation.team.team_name }}</strong> 
+                        в компании <strong>{{ invitation.company.company_name }}</strong>.</p>
+                    {% else %}
+                        <p>Вы были приглашены присоединиться к компании <strong>{{ invitation.company.company_name }}</strong>.</p>
+                    {% endif %}
+                    
+                    {% if invitation.is_manager_invite %}
+                        <p>Вам будут предоставлены права менеджера.</p>
+                    {% endif %}
+                    
+                    <p>Приглашение действительно до: <strong>{{ invitation.expires_at|date:"d.m.Y H:i" }}</strong></p>
+                    <p class="mb-0">Создано пользователем: <strong>{{ invitation.created_by.user_name }}</strong></p>
                 </div>
-            </form>
-            
-            <div class="has-text-centered mt-4">
-                <a href="{% url 'home' %}" class="button is-light">Вернуться на главную</a>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary">Подтвердить</button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <a href="{% url 'home' %}" class="btn btn-light">Вернуться на главную</a>
+                </div>
             </div>
         </div>
     </div>

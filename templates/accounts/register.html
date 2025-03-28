@@ -4,30 +4,30 @@
 {% block title %}Регистрация | Perfecto{% endblock %}
 
 {% block content %}
-<div class="columns is-centered">
-    <div class="column is-6-tablet is-5-desktop">
-        <div class="box">
-            <h1 class="title has-text-centered">Регистрация</h1>
-            
-            {% if invitation_info %}
-            <div class="notification is-info is-light">
-                <p>Вы регистрируетесь по приглашению в {{ invitation_info.type }} <strong>{{ invitation_info.name }}</strong>.</p>
-                <p>После регистрации вы будете автоматически добавлены.</p>
-            </div>
-            {% endif %}
-
-            <form method="post">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <div class="field">
-                    <div class="control">
-                        <button type="submit" class="button is-primary is-fullwidth">Зарегистрироваться</button>
-                    </div>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title text-center mb-4">Регистрация</h1>
+                
+                {% if invitation_info %}
+                <div class="alert alert-info">
+                    <p>Вы регистрируетесь по приглашению в {{ invitation_info.type }} <strong>{{ invitation_info.name }}</strong>.</p>
+                    <p class="mb-0">После регистрации вы будете автоматически добавлены.</p>
                 </div>
-            </form>
-            
-            <div class="mt-5 has-text-centered">
-                <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                    </div>
+                </form>
+                
+                <div class="mt-4 text-center">
+                    <p class="mb-0">Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+                </div>
             </div>
         </div>
     </div>

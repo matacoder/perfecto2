@@ -4,24 +4,22 @@
 {% block title %}Добавление достижения | Perfecto{% endblock %}
 
 {% block content %}
-<div class="columns is-centered">
-    <div class="column is-8">
-        <div class="box">
-            <h1 class="title">Добавление достижения</h1>
-            <h2 class="subtitle">Перформанс ревью для {{ review.user.user_name }}</h2>
-            
-            <form method="post">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <div class="field is-grouped">
-                    <div class="control">
-                        <button type="submit" class="button is-primary">Добавить</button>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Добавление достижения</h1>
+                <h5 class="card-subtitle mb-4 text-muted">Перформанс ревью для {{ review.user.user_name }}</h5>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                        <a href="{% url 'perfreview_detail' review_id=review.id %}" class="btn btn-light ms-2">Отмена</a>
                     </div>
-                    <div class="control">
-                        <a href="{% url 'perfreview_detail' review_id=review.id %}" class="button is-light">Отмена</a>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>

@@ -3,163 +3,155 @@
 {% block title %}Перфревью | Perfecto{% endblock %}
 
 {% block content %}
-<h1 class="title">Перфревью</h1>
+<h1 class="mb-4">Перфревью</h1>
 
-<div class="tabs is-boxed">
-    <ul>
-        <li class="is-active"><a href="#my-reviews" data-tab="my-reviews">Мои перфревью</a></li>
-        <li><a href="#managed-reviews" data-tab="managed-reviews">Перфревью на оценку</a></li>
-        <li><a href="#team-reviews" data-tab="team-reviews">Перфревью команды</a></li>
-    </ul>
+<ul class="nav nav-tabs mb-4" id="reviewTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="my-tab" data-bs-toggle="tab" data-bs-target="#my-reviews" type="button" role="tab" aria-controls="my-reviews" aria-selected="true">
+            <i class="fas fa-user me-1"></i>Мои перфревью
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="managed-tab" data-bs-toggle="tab" data-bs-target="#managed-reviews" type="button" role="tab" aria-controls="managed-reviews" aria-selected="false">
+            <i class="fas fa-tasks me-1"></i>Перфревью на оценку
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="team-tab" data-bs-toggle="tab" data-bs-target="#team-reviews" type="button" role="tab" aria-controls="team-reviews" aria-selected="false">
+            <i class="fas fa-users me-1"></i>Перфревью команды
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="reviewTabsContent">
+    <div class="tab-pane fade show active" id="my-reviews" role="tabpanel" aria-labelledby="my-tab">
+        <h4 class="mb-3">Мои перфревью</h4>
+        
+        {% if my_reviews %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Команда</th>
+                        <th>Создано</th>
+                        <th>Достижения</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for review in my_reviews %}
+                    <tr>
+                        <td>{{ review.team.team_name }}</td>
+                        <td>{{ review.created|date:"d.m.Y H:i" }}</td>
+                        <td>{{ review.achievements.count }}</td>
+                        <td>
+                            <a href="{% url 'perfreview_detail' review_id=review.id %}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye me-1"></i>
+                                Просмотр
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <p class="mb-0">У вас пока нет перфревью.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="tab-pane fade" id="managed-reviews" role="tabpanel" aria-labelledby="managed-tab">
+        <h4 class="mb-3">Перфревью на оценку</h4>
+        
+        {% if managed_reviews %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Сотрудник</th>
+                        <th>Команда</th>
+                        <th>Создано</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for review in managed_reviews %}
+                    <tr>
+                        <td>{{ review.user.user_name }}</td>
+                        <td>{{ review.team.team_name }}</td>
+                        <td>{{ review.created|date:"d.m.Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'perfreview_detail' review_id=review.id %}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye me-1"></i>
+                                Просмотр
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <p class="mb-0">Нет перфревью, требующих вашей оценки.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="tab-pane fade" id="team-reviews" role="tabpanel" aria-labelledby="team-tab">
+        <h4 class="mb-3">Перфревью команды</h4>
+        
+        {% if team_reviews %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Сотрудник</th>
+                        <th>Команда</th>
+                        <th>Создано</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for review in team_reviews %}
+                    <tr>
+                        <td>{{ review.user.user_name }}</td>
+                        <td>{{ review.team.team_name }}</td>
+                        <td>{{ review.created|date:"d.m.Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'perfreview_detail' review_id=review.id %}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye me-1"></i>
+                                Просмотр
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <p class="mb-0">В ваших командах пока нет перфревью.</p>
+        </div>
+        {% endif %}
+    </div>
 </div>
-
-<div class="tab-content" id="my-reviews">
-    <h2 class="subtitle">Мои перфревью</h2>
-    
-    {% if my_reviews %}
-    <div class="table-container">
-        <table class="table is-fullwidth">
-            <thead>
-                <tr>
-                    <th>Команда</th>
-                    <th>Создано</th>
-                    <th>Достижения</th>
-                    <th>Действия</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for review in my_reviews %}
-                <tr>
-                    <td>{{ review.team.team_name }}</td>
-                    <td>{{ review.created|date:"d.m.Y H:i" }}</td>
-                    <td>{{ review.achievements.count }}</td>
-                    <td>
-                        <a href="{% url 'perfreview_detail' review_id=review.id %}" class="button is-small is-info">
-                            <span class="icon">
-                                <i class="fas fa-eye"></i>
-                            </span>
-                            <span>Просмотр</span>
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <div class="notification is-info is-light">
-        <p>У вас пока нет перфревью.</p>
-    </div>
-    {% endif %}
-</div>
-
-<div class="tab-content" id="managed-reviews" style="display: none;">
-    <h2 class="subtitle">Перфревью на оценку</h2>
-    
-    {% if managed_reviews %}
-    <div class="table-container">
-        <table class="table is-fullwidth">
-            <thead>
-                <tr>
-                    <th>Сотрудник</th>
-                    <th>Команда</th>
-                    <th>Создано</th>
-                    <th>Действия</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for review in managed_reviews %}
-                <tr>
-                    <td>{{ review.user.user_name }}</td>
-                    <td>{{ review.team.team_name }}</td>
-                    <td>{{ review.created|date:"d.m.Y H:i" }}</td>
-                    <td>
-                        <a href="{% url 'perfreview_detail' review_id=review.id %}" class="button is-small is-info">
-                            <span class="icon">
-                                <i class="fas fa-eye"></i>
-                            </span>
-                            <span>Просмотр</span>
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <div class="notification is-info is-light">
-        <p>Нет перфревью, требующих вашей оценки.</p>
-    </div>
-    {% endif %}
-</div>
-
-<div class="tab-content" id="team-reviews" style="display: none;">
-    <h2 class="subtitle">Перфревью команды</h2>
-    
-    {% if team_reviews %}
-    <div class="table-container">
-        <table class="table is-fullwidth">
-            <thead>
-                <tr>
-                    <th>Сотрудник</th>
-                    <th>Команда</th>
-                    <th>Создано</th>
-                    <th>Действия</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for review in team_reviews %}
-                <tr>
-                    <td>{{ review.user.user_name }}</td>
-                    <td>{{ review.team.team_name }}</td>
-                    <td>{{ review.created|date:"d.m.Y H:i" }}</td>
-                    <td>
-                        <a href="{% url 'perfreview_detail' review_id=review.id %}" class="button is-small is-info">
-                            <span class="icon">
-                                <i class="fas fa-eye"></i>
-                            </span>
-                            <span>Просмотр</span>
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <div class="notification is-info is-light">
-        <p>В ваших командах пока нет перфревью.</p>
-    </div>
-    {% endif %}
-</div>
-
 {% endblock %}
 
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Tab functionality
-    const tabs = document.querySelectorAll('.tabs li');
-    const tabContents = document.querySelectorAll('.tab-content');
-    
-    tabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            // Remove active class from all tabs
-            tabs.forEach(t => t.classList.remove('is-active'));
-            
-            // Add active class to clicked tab
-            this.classList.add('is-active');
-            
-            // Hide all tab contents
-            tabContents.forEach(content => {
-                content.style.display = 'none';
-            });
-            
-            // Show the selected tab content
-            const tabId = this.querySelector('a').getAttribute('data-tab');
-            document.getElementById(tabId).style.display = 'block';
-        });
-    });
+    var triggerTabList = [].slice.call(document.querySelectorAll('#reviewTabs button'))
+    triggerTabList.forEach(function (triggerEl) {
+        var tabTrigger = new bootstrap.Tab(triggerEl)
+
+        triggerEl.addEventListener('click', function (event) {
+            event.preventDefault()
+            tabTrigger.show()
+        })
+    })
 });
 </script>
 {% endblock %}

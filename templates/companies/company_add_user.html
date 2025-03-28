@@ -4,23 +4,21 @@
 {% block title %}Добавить пользователя | {{ company.company_name }} | Perfecto{% endblock %}
 
 {% block content %}
-<div class="columns is-centered">
-    <div class="column is-8">
-        <div class="box">
-            <h1 class="title">Добавить пользователя в {{ company.company_name }}</h1>
-            
-            <form method="post">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <div class="field is-grouped">
-                    <div class="control">
-                        <button type="submit" class="button is-primary">Добавить</button>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Добавить пользователя в {{ company.company_name }}</h1>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                        <a href="{% url 'company_detail' company_id=company.id %}" class="btn btn-light ms-2">Отмена</a>
                     </div>
-                    <div class="control">
-                        <a href="{% url 'company_detail' company_id=company.id %}" class="button is-light">Отмена</a>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>

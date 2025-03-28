@@ -4,41 +4,39 @@
 {% block title %}Войти | Perfecto{% endblock %}
 
 {% block content %}
-<div class="columns is-centered">
-    <div class="column is-6-tablet is-5-desktop">
-        <div class="box">
-            <h1 class="title has-text-centered">Войти в систему</h1>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title text-center mb-4">Войти в систему</h1>
 
-            <form method="post" class="mb-5">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <div class="field">
-                    <div class="control">
-                        <button type="submit" class="button is-primary is-fullwidth">Войти</button>
+                <form method="post" class="mb-4">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary">Войти</button>
                     </div>
+                </form>
+                
+                <div class="divider-text">
+                    <span>ИЛИ</span>
                 </div>
-            </form>
-            
-            <div class="is-divider" data-content="ИЛИ"></div>
-            
-            <h2 class="subtitle has-text-centered">Войти через Telegram</h2>
-            <form method="post" action="{% url 'telegram_login' %}">
-                {% csrf_token %}
-                {{ telegram_form|crispy }}
-                <div class="field">
-                    <div class="control">
-                        <button type="submit" class="button is-info is-fullwidth">
-                            <span class="icon">
-                                <i class="fab fa-telegram"></i>
-                            </span>
-                            <span>Получить ссылку в Telegram</span>
+                
+                <h5 class="text-center mb-3">Войти через Telegram</h5>
+                <form method="post" action="{% url 'telegram_login' %}">
+                    {% csrf_token %}
+                    {{ telegram_form|crispy }}
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="submit" class="btn btn-info">
+                            <i class="fab fa-telegram me-2"></i>
+                            Получить ссылку в Telegram
                         </button>
                     </div>
+                </form>
+                
+                <div class="mt-4 text-center">
+                    <p class="mb-0">Ещё нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
                 </div>
-            </form>
-            
-            <div class="mt-5 has-text-centered">
-                <p>Ещё нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
             </div>
         </div>
     </div>
