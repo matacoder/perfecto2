@@ -1,0 +1,38 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 4 * * 1'  # Еженедельно по понедельникам в 04:00 UTC
+
+jobs:
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install security scanning tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install safety bandit
+          
+      - name: Run dependency security check with Safety
+        run: |
+          echo "🔍 Проверка зависимостей на наличие известных уязвимостей..."
+          safety check -r requirements.txt
+          
+      - name: Run code security check with Bandit
+        run: |
+          echo "🔍 Статический анализ кода на наличие уязвимостей..."
+          bandit -r . -x ./venv,./tests

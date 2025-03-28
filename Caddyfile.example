@@ -1,0 +1,41 @@
+# Пример конфигурации Caddy для проксирования на локальный порт 2222
+# Расположите этот файл на сервере как /etc/caddy/Caddyfile
+
+perf.mtkv.ru {
+    # Автоматически получать и обновлять SSL сертификаты
+    tls internal
+    
+    # Логирование в определенный файл
+    log {
+        output file /var/log/caddy/perf.mtkv.ru.log {
+            roll_size 10MB
+            roll_keep 5
+            roll_keep_for 720h
+        }
+    }
+    
+    # Обратный прокси на порт 2222
+    reverse_proxy localhost:2222 {
+        # Заголовки для правильной обработки реальных IP-адресов
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+        
+        # Таймауты
+        transport http {
+            response_header_timeout 30s
+            read_timeout 30s
+            write_timeout 30s
+            dial_timeout 5s
+        }
+    }
+    
+    # Заголовки безопасности
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
+    }
+}

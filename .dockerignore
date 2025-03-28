@@ -1,0 +1,40 @@
+# Git
+.git
+.gitignore
+.github
+
+# Виртуальное окружение и кэши
+.env
+.env.*
+.pytest_cache
+.coverage
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+htmlcov/
+
+# Локальные файлы разработки
+db.sqlite3
+media/
+local_settings.py
+
+# Файлы Docker
+Dockerfile*
+docker-compose*
+
+# Документация и прочие файлы
+*.md
+LICENSE
+*.log
+.DS_Store
+
+# IDE файлы
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node.js файлы
+node_modules/
