@@ -70,12 +70,12 @@ jobs:
           ssh ${SSH_USER}@${IP} "mkdir -p ~/nginx_config"
           
           # Копирование файла конфигурации
-          scp nginx/nginx.conf ${SSH_USER}@${IP}:~/nginx_config/app.conf
+          scp nginx/nginx.conf ${SSH_USER}@${IP}:~/nginx_config/nginx.conf
           
-          echo "✅ Файл конфигурации nginx скопирован на удаленный сервер как ~/nginx_config/app.conf"
+          echo "✅ Файл конфигурации nginx скопирован на удаленный сервер как ~/nginx_config/nginx.conf"
           
           # Проверяем скопированный файл
-          ssh ${SSH_USER}@${IP} "ls -la ~/nginx_config/ && cat ~/nginx_config/app.conf | head -5"
+          ssh ${SSH_USER}@${IP} "ls -la ~/nginx_config/ && cat ~/nginx_config/nginx.conf | head -5"
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           IP: ${{ secrets.IP }}
@@ -98,12 +98,15 @@ jobs:
           echo "🏗️ Сборка Docker образов..."
           
           # Задаем путь к файлу конфигурации nginx на удаленном сервере
-          # Изменено название файла с default.conf на app.conf
-          NGINX_PATH="/home/${SSH_USER}/nginx_config/app.conf"
+          NGINX_PATH="/home/${SSH_USER}/nginx_config/nginx.conf"
           echo "🔧 Путь к файлу конфигурации nginx: ${NGINX_PATH}"
           
           # Явно передаем переменные окружения для Docker Compose
           echo "NGINX_CONFIG_PATH=${NGINX_PATH}" >> .env.prod
+          
+          # Проверяем содержимое requirements.txt
+          echo "📋 Проверяем файл requirements.txt:"
+          grep -E "gunicorn|psycopg2" requirements.txt || echo "⚠️ В requirements.txt отсутствуют важные зависимости!"
           
           # Запускаем сборку и деплой
           docker compose --env-file .env.prod -f docker-compose.prod.yml build
@@ -111,13 +114,21 @@ jobs:
           echo "🚀 Запуск контейнеров..."
           docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
           
+          # Проверка контейнера Django на наличие необходимых пакетов
+          echo "📋 Проверка установленных пакетов в контейнере Django:"
+          docker compose --env-file .env.prod -f docker-compose.prod.yml exec app pip list | grep -E "gunicorn|psycopg2" || echo "⚠️ В контейнере отсутствуют важные пакеты!"
+          
+          # Проверка логов для диагностики
+          echo "📋 Логи Django контейнера (последние 20 строк):"
+          docker compose --env-file .env.prod -f docker-compose.prod.yml logs --tail=20 app || echo "⚠️ Не удалось получить логи app"
+          
           # Проверка логов nginx для диагностики
           echo "📋 Логи nginx контейнера (последние 20 строк):"
-          docker compose --env-file .env.prod -f docker-compose.prod.yml logs --tail=20 nginx
+          docker compose --env-file .env.prod -f docker-compose.prod.yml logs --tail=20 nginx || echo "⚠️ Не удалось получить логи nginx"
           
           # Проверка содержимого файла конфигурации внутри контейнера
           echo "📄 Проверка конфигурации nginx внутри контейнера:"
-          docker compose --env-file .env.prod -f docker-compose.prod.yml exec nginx cat /etc/nginx/conf.d/default.conf | head -10
+          docker compose --env-file .env.prod -f docker-compose.prod.yml exec nginx cat /etc/nginx/conf.d/default.conf | head -10 || echo "⚠️ Не удалось проверить конфигурацию nginx"
           
           echo "✅ Деплой успешно выполнен! Приложение доступно по адресу: https://${DOMAIN}"
         env:

@@ -32,7 +32,10 @@ RUN apt-get update && \
 WORKDIR /app
 COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.txt .
-RUN pip install --no-cache /wheels/*
+RUN pip install --no-cache /wheels/* 
+
+# Проверка установки ключевых зависимостей
+RUN pip list | grep gunicorn && pip list | grep psycopg2
 
 # Копирование кода приложения
 COPY . /app/

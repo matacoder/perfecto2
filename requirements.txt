@@ -9,3 +9,7 @@ python-telegram-bot==20.6
 pytest==7.4.3
 pytest-django==4.7.0
 pytest-cov==4.1.0
+# Добавляем необходимые зависимости для производственного окружения
+gunicorn==21.2.0
+psycopg2-binary==2.9.9
+dj-database-url==2.1.0
