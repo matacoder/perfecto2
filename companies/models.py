@@ -5,7 +5,7 @@ class Company(models.Model):
     """Company model representing organizations in the system."""
     company_name = models.CharField(max_length=255)
     company_description = models.TextField(blank=True)
-    users = models.ManyToManyField(User, through='CompanyUsers')
+    users = models.ManyToManyField(User, through='CompanyUsers', related_name='company_set')
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
     
@@ -17,8 +17,8 @@ class Company(models.Model):
 
 class CompanyUsers(models.Model):
     """Association table between User and Company models."""
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='company_relations')
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company_users')
     is_manager = models.BooleanField(default=False)
     is_owner = models.BooleanField(default=False)
     

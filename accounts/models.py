@@ -36,3 +36,23 @@ class User(AbstractUser):
     
     def __str__(self):
         return self.email
+    
+    @property
+    def companies(self):
+        """Компании, в которых состоит пользователь."""
+        return self.company_relations.all()
+    
+    @property
+    def teams(self):
+        """Команды, в которых состоит пользователь."""
+        return self.team_relations.all()
+    
+    @property
+    def reviews(self):
+        """Перфревью пользователя."""
+        return self.perfreview_set.all()
+    
+    @property
+    def invitations(self):
+        """Приглашения, созданные пользователем."""
+        return self.sent_invitations.all()

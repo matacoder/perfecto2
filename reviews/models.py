@@ -1,12 +1,10 @@
 from django.db import models
 from accounts.models import User
 from teams.models import Team
-# Remove PostgreSQL-specific import that won't work with SQLite
-# from django.contrib.postgres.fields import ArrayField
 
 class PerfReview(models.Model):
-    """Performance review model."""
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    """Performance review model for tracking user reviews in teams."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='perfreview_set')
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='reviews')
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)

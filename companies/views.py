@@ -7,7 +7,7 @@ from .forms import CompanyForm, CompanyUserForm
 @login_required
 def company_list(request):
     """Display companies where the user is a member."""
-    user_companies = Company.objects.filter(companyusers__user=request.user)
+    user_companies = Company.objects.filter(company_users__user=request.user)
     return render(request, 'companies/company_list.html', {'companies': user_companies})
 
 @login_required

@@ -143,7 +143,7 @@ class TestPerfReviewCreateView:
         
         # Check if reviews were created for all team members
         assert PerfReview.objects.count() == 3  # One for each team member
-        users = User.objects.filter(teamusers__team=team_with_users)
+        users = User.objects.filter(team_relations__team=team_with_users)
         for user in users:
             assert PerfReview.objects.filter(user=user, team=team_with_users).exists()
     

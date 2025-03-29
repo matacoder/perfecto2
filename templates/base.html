@@ -26,22 +26,38 @@
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'dashboard' %}">Дашборд</a>
+                        <a class="nav-link d-flex align-items-center" href="{% url 'dashboard' %}">
+                            <i class="fas fa-tachometer-alt me-1"></i> Дашборд
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'company_list' %}">Компании</a>
+                        <a class="nav-link d-flex align-items-center" href="{% url 'company_list' %}">
+                            <i class="fas fa-building me-1"></i> Компании
+                            <span class="badge bg-light text-primary ms-1">{{ user.companies.count }}</span>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'team_list' %}">Команды</a>
+                        <a class="nav-link d-flex align-items-center" href="{% url 'team_list' %}">
+                            <i class="fas fa-users me-1"></i> Команды
+                            <span class="badge bg-light text-primary ms-1">{{ user.teams.count }}</span>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'perfreview_list' %}">Перфревью</a>
+                        <a class="nav-link d-flex align-items-center" href="{% url 'perfreview_list' %}">
+                            <i class="fas fa-chart-bar me-1"></i> Перфревью
+                            <span class="badge bg-light text-primary ms-1">{{ user.reviews.count }}</span>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'invitation_list' %}">Приглашения</a>
+                        <a class="nav-link d-flex align-items-center" href="{% url 'invitation_list' %}">
+                            <i class="fas fa-envelope me-1"></i> Приглашения
+                            <span class="badge bg-light text-primary ms-1">{{ user.invitations.count }}</span>
+                        </a>
                     </li>
                     <li class="nav-item ms-2">
-                        <a class="btn btn-outline-light" href="{% url 'logout' %}">Выйти</a>
+                        <a class="btn btn-outline-light" href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt me-1"></i> Выйти
+                        </a>
                     </li>
                     {% else %}
                     <li class="nav-item">
@@ -80,7 +96,9 @@
     <footer class="footer bg-light py-4 mt-auto">
         <div class="container text-center">
             <p class="mb-0">
-                <strong>Perfecto</strong> - система для проведения перформанс ревью в IT-компаниях.
+                <strong>Perfecto</strong> - система для проведения перформанс ревью в IT-компаниях.<br/>
+                Создание продукта: <a href="https://mtkv.ru" target="_blank">Денис Матаков</a>. <br>Хотите создать продукт за неделю?
+                Связаться: <a href="https://t.me/matakov?text=Заказ%20продукта%20или%20прототипа" target="_blank">Telegram</a>.
             </p>
         </div>
     </footer>

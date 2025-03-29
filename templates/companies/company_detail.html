@@ -34,6 +34,15 @@
                             Создать команду
                         </a>
                         {% endif %}
+                        
+                        {% with teams_count=company.teams.count %}
+                        {% if teams_count %}
+                        <a href="#teams-section" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
+                            <span><i class="fas fa-layer-group me-2"></i> Команды</span>
+                            <span class="badge bg-primary rounded-pill">{{ teams_count }}</span>
+                        </a>
+                        {% endif %}
+                        {% endwith %}
                     </div>
                 </div>
             </div>
@@ -54,7 +63,7 @@
 
                 <hr>
                 
-                <h4 class="mb-3">Сотрудники</h4>
+                <h4 class="mb-3">Сотрудники <span class="badge bg-secondary">{{ company_users|length }}</span></h4>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -88,7 +97,7 @@
 
                 <hr>
 
-                <h4 class="mb-3">Команды</h4>
+                <h4 class="mb-3" id="teams-section">Команды <span class="badge bg-secondary">{{ company.teams.count }}</span></h4>
                 {% if company.teams.all %}
                 <div class="row row-cols-1 row-cols-md-3 g-4">
                     {% for team in company.teams.all %}

@@ -1,14 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, Http404
 from .models import Team, TeamUsers
-from companies.models import Company, CompanyUsers
 from .forms import TeamForm, TeamUserForm
+from companies.models import Company, CompanyUsers
 
 @login_required
 def team_list(request):
-    """List all teams where the user is a member."""
-    user_teams = Team.objects.filter(teamusers__user=request.user)
+    """Display teams where the user is a member."""
+    user_teams = Team.objects.filter(team_users__user=request.user)
     return render(request, 'teams/team_list.html', {'teams': user_teams})
 
 @login_required

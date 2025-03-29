@@ -8,23 +8,29 @@ from companies.models import CompanyUsers
 from accounts.models import User
 
 @login_required
-def perfreviews_list(request):
-    """List performance reviews for the current user."""
-    # Reviews where the user is the subject
+def perfreview_list(request):
+    """Display performance reviews."""
+    # Мои перфревью
     my_reviews = PerfReview.objects.filter(user=request.user)
     
-    # Reviews where the user is a reviewer
-    reviewing = Achievement.objects.filter(reviewers=request.user).values_list('perfreview', flat=True).distinct()
-    managed_reviews = PerfReview.objects.filter(id__in=reviewing)
+    # Перфревью на оценку (где я ревьюер)
+    managed_reviews = PerfReview.objects.filter(
+        achievements__reviewers=request.user
+    ).distinct().exclude(user=request.user)
     
-    # Reviews for teams the user manages
-    managed_teams = Team.objects.filter(teamusers__user=request.user, teamusers__is_manager=True)
-    team_reviews = PerfReview.objects.filter(team__in=managed_teams)
+    # Перфревью команды (где я менеджер или владелец)
+    # Было: teams_managed = Team.objects.filter(teamusers__user=request.user, teamusers__is_manager=True)
+    # Заменяем на:
+    teams_managed = Team.objects.filter(team_users__user=request.user, team_users__is_manager=True)
+    
+    team_reviews = PerfReview.objects.filter(
+        team__in=teams_managed
+    ).exclude(user=request.user)
     
     context = {
         'my_reviews': my_reviews,
         'managed_reviews': managed_reviews,
-        'team_reviews': team_reviews
+        'team_reviews': team_reviews,
     }
     
     return render(request, 'reviews/perfreview_list.html', context)
@@ -48,7 +54,10 @@ def perfreviews_create(request, team_id=None, user_id=None):
             return HttpResponseForbidden("You don't have permission to create reviews for this team")
         
         # Create reviews for all team members
-        team_members = User.objects.filter(teamusers__team=team)
+        # Было: team_members = User.objects.filter(teamusers__team=team)
+        # Заменяем на:
+        team_members = User.objects.filter(team_relations__team=team)
+        
         for member in team_members:
             PerfReview.objects.create(user=member, team=team)
         

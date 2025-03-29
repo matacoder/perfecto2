@@ -7,7 +7,7 @@ class Team(models.Model):
     team_name = models.CharField(max_length=255)
     team_description = models.TextField(blank=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='teams')
-    users = models.ManyToManyField(User, through='TeamUsers')
+    users = models.ManyToManyField(User, through='TeamUsers', related_name='team_set')
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
     
@@ -16,8 +16,8 @@ class Team(models.Model):
 
 class TeamUsers(models.Model):
     """Association table between User and Team models."""
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='team_relations')
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='team_users')
     is_manager = models.BooleanField(default=False)
     is_owner = models.BooleanField(default=False)
     

@@ -2,6 +2,19 @@ import pytest
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from accounts.models import User
+from companies.models import Company, CompanyUsers
+from teams.models import Team, TeamUsers
+from reviews.models import PerfReview
+from invitations.models import Invitation
+
+@pytest.fixture
+def test_user():
+    """Create a user for testing properties"""
+    return User.objects.create_user(
+        email="property_test@example.com",
+        password="password123",
+        user_name="Property Test User"
+    )
 
 @pytest.mark.django_db
 class TestUserModel:
@@ -87,3 +100,103 @@ class TestUserModel:
         assert user.user_job == "Software Developer"
         assert user.telegram_username == "@testuser"
         assert user.telegram_id == "12345"
+    
+    def test_property_companies(self):
+        """Test that companies property returns correct queryset"""
+        user = User.objects.create_user(
+            email="companies_test@example.com",
+            password="password123",
+            user_name="Companies Test User"
+        )
+        
+        # Create companies
+        company1 = Company.objects.create(company_name="Company 1")
+        company2 = Company.objects.create(company_name="Company 2")
+        
+        # Create relations
+        relation1 = CompanyUsers.objects.create(user=user, company=company1)
+        relation2 = CompanyUsers.objects.create(user=user, company=company2)
+        
+        # Test property
+        companies = user.companies
+        assert companies.count() == 2
+        assert relation1 in companies
+        assert relation2 in companies
+    
+    def test_property_teams(self):
+        """Test that teams property returns correct queryset"""
+        user = User.objects.create_user(
+            email="teams_test@example.com",
+            password="password123",
+            user_name="Teams Test User"
+        )
+        
+        # Create company and teams
+        company = Company.objects.create(company_name="Test Company")
+        team1 = Team.objects.create(team_name="Team 1", company=company)
+        team2 = Team.objects.create(team_name="Team 2", company=company)
+        
+        # Create relations
+        relation1 = TeamUsers.objects.create(user=user, team=team1)
+        relation2 = TeamUsers.objects.create(user=user, team=team2)
+        
+        # Test property
+        teams = user.teams
+        assert teams.count() == 2
+        assert relation1 in teams
+        assert relation2 in teams
+    
+    def test_property_reviews(self):
+        """Test that reviews property returns correct queryset"""
+        user = User.objects.create_user(
+            email="reviews_test@example.com",
+            password="password123",
+            user_name="Reviews Test User"
+        )
+        
+        # Create company and team
+        company = Company.objects.create(company_name="Test Company")
+        team = Team.objects.create(team_name="Test Team", company=company)
+        
+        # Create reviews
+        review1 = PerfReview.objects.create(user=user, team=team)
+        review2 = PerfReview.objects.create(user=user, team=team)
+        
+        # Test property
+        reviews = user.reviews
+        assert reviews.count() == 2
+        assert review1 in reviews
+        assert review2 in reviews
+    
+    def test_property_invitations(self):
+        """Test that invitations property returns correct queryset"""
+        user = User.objects.create_user(
+            email="invitations_test@example.com",
+            password="password123",
+            user_name="Invitations Test User"
+        )
+        
+        # Create company
+        company = Company.objects.create(company_name="Test Company")
+        team = Team.objects.create(team_name="Test Team", company=company)
+        
+        # Create invitations
+        invitation1 = Invitation.objects.create(
+            created_by=user,
+            invitation_type="company",
+            company=company,
+            expires_at="2099-01-01T00:00:00Z"
+        )
+        invitation2 = Invitation.objects.create(
+            created_by=user,
+            invitation_type="team",
+            company=company,
+            team=team,
+            expires_at="2099-01-01T00:00:00Z"
+        )
+        
+        # Test property
+        invitations = user.invitations
+        assert invitations.count() == 2
+        assert invitation1 in invitations
+        assert invitation2 in invitations

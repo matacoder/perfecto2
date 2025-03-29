@@ -9,16 +9,19 @@
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="my-tab" data-bs-toggle="tab" data-bs-target="#my-reviews" type="button" role="tab" aria-controls="my-reviews" aria-selected="true">
             <i class="fas fa-user me-1"></i>Мои перфревью
+            <span class="badge bg-light text-primary ms-1">{{ my_reviews|length }}</span>
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="managed-tab" data-bs-toggle="tab" data-bs-target="#managed-reviews" type="button" role="tab" aria-controls="managed-reviews" aria-selected="false">
             <i class="fas fa-tasks me-1"></i>Перфревью на оценку
+            <span class="badge bg-light text-primary ms-1">{{ managed_reviews|length }}</span>
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="team-tab" data-bs-toggle="tab" data-bs-target="#team-reviews" type="button" role="tab" aria-controls="team-reviews" aria-selected="false">
             <i class="fas fa-users me-1"></i>Перфревью команды
+            <span class="badge bg-light text-primary ms-1">{{ team_reviews|length }}</span>
         </button>
     </li>
 </ul>
